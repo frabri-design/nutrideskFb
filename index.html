@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NutriDesk FB">
-<meta name="theme-color" content="#1e293b">
+<meta name="theme-color" content="#0F1A33">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -38,7 +38,7 @@
         
         const App = () => {
             const [isLocked, setIsLocked] = useState(true);
-            const [currentPin, setCurrentPin] = useState('1234');
+            const [currentPin, setCurrentPin] = useState(() => localStorage.getItem('nutridesk_pin') || '1234');
             const [pin, setPin] = useState('');
             const [showChangePin, setShowChangePin] = useState(false);
             const [newPinData, setNewPinData] = useState({ old: '', new: '', confirm: '' });
@@ -117,14 +117,15 @@
             };
 
             const changePin = () => {
-                if (newPinData.old !== currentPin) return alert('PIN attuale errato');
-                if (newPinData.new.length !== 4) return alert('Nuovo PIN deve essere 4 cifre');
-                if (newPinData.new !== newPinData.confirm) return alert('I PIN non corrispondono');
-                setCurrentPin(newPinData.new);
-                setShowChangePin(false);
-                setNewPinData({ old: '', new: '', confirm: '' });
-                alert('PIN modificato!');
-            };
+    if (newPinData.old !== currentPin) return alert('PIN attuale errato');
+    if (newPinData.new.length !== 4) return alert('Nuovo PIN deve essere 4 cifre');
+    if (newPinData.new !== newPinData.confirm) return alert('I PIN non corrispondono');
+    localStorage.setItem('nutridesk_pin', newPinData.new);
+    setCurrentPin(newPinData.new);
+    setShowChangePin(false);
+    setNewPinData({ old: '', new: '', confirm: '' });
+    alert('PIN modificato con successo!');
+};
 
             const filtered = patients.filter(p => {
                 const search = (p.name + (p.allergies || '') + (p.notes || '')).toLowerCase().includes(searchTerm.toLowerCase());
@@ -136,18 +137,18 @@
 
             if (isLocked) {
                 return (
-                    <div className="min-h-screen bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center p-4">
+                    <div className="min-h-screen bg-gradient-to-br from-[#0F1A33] to-[#0F1A33] flex items-center justify-center p-4">
                         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm">
                             <div className="text-center mb-6">
-                                <div className="bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <div className="text-orange-400"><IconLock /></div>
+                                <div className="bg-[#FBF0ED] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <div className="text-[#E8B49A]"><IconLock /></div>
                                 </div>
-                                <h1 className="text-3xl font-bold text-slate-800 mb-2">NutriDesk FB</h1>
+                                <h1 className="text-3xl font-bold text-[#0F1A33] mb-2">NutriDesk FB</h1>
                                 <p className="text-gray-500">Inserisci il tuo PIN</p>
                                 {currentPin === '1234' && (
-                                    <div className="mt-4 bg-orange-50 border-l-4 border-orange-400 p-3 text-left">
-                                        <p className="text-xs text-orange-800 font-medium">PIN temporaneo: 1234</p>
-                                        <p className="text-xs text-orange-700 mt-1">Modificalo nelle Impostazioni al primo accesso</p>
+                                    <div className="mt-4 bg-orange-50 border-l-4 border-[#E8B49A] p-3 text-left">
+                                        <p className="text-xs text-[#0F1A33] font-medium">PIN temporaneo: 1234</p>
+                                        <p className="text-xs text-[#E8B49A] mt-1">Modificalo nelle Impostazioni al primo accesso</p>
                                     </div>
                                 )}
                             </div>
@@ -163,11 +164,11 @@
                                         else { alert('PIN errato'); setPin(''); }
                                     }
                                 }}
-                                className="w-full text-center text-3xl tracking-widest border-2 rounded-xl p-4 mb-6 focus:border-orange-400 focus:outline-none"
+                                className="w-full text-center text-3xl tracking-widest border-2 rounded-xl p-4 mb-6 focus:border-[#E8B49A] focus:outline-none"
                                 placeholder="••••"
                                 autoFocus
                             />
-                            <button onClick={() => { if (pin === currentPin) { setIsLocked(false); setPin(''); } else { alert('PIN errato'); setPin(''); } }} className="w-full bg-slate-700 text-white rounded-xl py-4 font-semibold hover:bg-slate-800">Sblocca</button>
+                            <button onClick={() => { if (pin === currentPin) { setIsLocked(false); setPin(''); } else { alert('PIN errato'); setPin(''); } }} className="w-full bg-[#0F1A33] text-white rounded-xl py-4 font-semibold hover:bg-[#0F1A33]">Sblocca</button>
                         </div>
                     </div>
                 );
@@ -176,24 +177,24 @@
             if (showChangePin) {
                 return (
                     <div className="min-h-screen bg-gray-50">
-                        <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-6">
+                        <div className="bg-gradient-to-r from-[#0F1A33] to-[#0F1A33] text-white p-6">
                             <button onClick={() => { setShowChangePin(false); setNewPinData({ old: '', new: '', confirm: '' }); }} className="text-white mb-4">← Annulla</button>
                             <h2 className="text-2xl font-bold">Cambia PIN</h2>
                         </div>
                         <div className="p-4 space-y-4">
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">PIN attuale</label>
-                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.old} onChange={(e) => setNewPinData({...newPinData, old: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none text-center text-2xl tracking-widest" />
+                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.old} onChange={(e) => setNewPinData({...newPinData, old: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-center text-2xl tracking-widest" />
                             </div>
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Nuovo PIN</label>
-                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.new} onChange={(e) => setNewPinData({...newPinData, new: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none text-center text-2xl tracking-widest" />
+                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.new} onChange={(e) => setNewPinData({...newPinData, new: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-center text-2xl tracking-widest" />
                             </div>
                             <div className="bg-white rounded-2xl p-5 shadow-sm">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Conferma nuovo PIN</label>
-                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.confirm} onChange={(e) => setNewPinData({...newPinData, confirm: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none text-center text-2xl tracking-widest" />
+                                <input type="password" inputMode="numeric" maxLength={4} value={newPinData.confirm} onChange={(e) => setNewPinData({...newPinData, confirm: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-center text-2xl tracking-widest" />
                             </div>
-                            <button onClick={changePin} className="w-full bg-orange-400 text-white rounded-xl py-4 font-semibold hover:bg-orange-500">Salva nuovo PIN</button>
+                            <button onClick={changePin} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500">Salva nuovo PIN</button>
                         </div>
                     </div>
                 );
@@ -203,32 +204,32 @@ if (showForm) {
                 const isEdit = showForm.includes('edit');
                 return (
                     <div className="min-h-screen bg-gray-50">
-                        <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-6 shadow-lg">
+                        <div className="bg-gradient-to-r from-[#0F1A33] to-[#0F1A33] text-white p-6 shadow-lg">
                             <button onClick={() => { setShowForm(null); setFormData({}); setEditingIdx(null); }} className="text-white mb-4">← Annulla</button>
                             <h2 className="text-2xl font-bold">{isEdit ? 'Modifica' : 'Nuovo'} {isPatient ? 'Paziente' : 'Visita'}</h2>
                         </div>
                         <div className="p-4 space-y-4 pb-24">
                             {isPatient ? (
                                 <>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Nome e Cognome *</label><input type="text" placeholder="Mario Rossi" value={formData.name || ''} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Data di nascita *</label><input type="date" value={formData.birthDate || ''} onChange={(e) => setFormData({...formData, birthDate: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Altezza (cm)</label><input type="number" placeholder="170" value={formData.height || ''} onChange={(e) => setFormData({...formData, height: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Stato</label><select value={formData.status || 'active'} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none"><option value="active">Attivo</option><option value="completed">Concluso</option></select></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Allergie / Intolleranze / Patologie / Esami</label><input type="text" placeholder="es. Lattosio" value={formData.allergies || ''} onChange={(e) => setFormData({...formData, allergies: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Note</label><textarea rows={3} placeholder="Obiettivi..." value={formData.notes || ''} onChange={(e) => setFormData({...formData, notes: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Nome e Cognome *</label><input type="text" placeholder="Mario Rossi" value={formData.name || ''} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Data di nascita *</label><input type="date" value={formData.birthDate || ''} onChange={(e) => setFormData({...formData, birthDate: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Altezza (cm)</label><input type="number" placeholder="170" value={formData.height || ''} onChange={(e) => setFormData({...formData, height: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Stato</label><select value={formData.status || 'active'} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none"><option value="active">Attivo</option><option value="completed">Concluso</option></select></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Allergie / Intolleranze / Patologie / Esami</label><input type="text" placeholder="es. Lattosio" value={formData.allergies || ''} onChange={(e) => setFormData({...formData, allergies: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Note</label><textarea rows={3} placeholder="Obiettivi..." value={formData.notes || ''} onChange={(e) => setFormData({...formData, notes: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                 </>
                             ) : (
                                 <>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Data visita *</label><input type="date" value={formData.date || new Date().toISOString().split('T')[0]} onChange={(e) => setFormData({...formData, date: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg) *</label><input type="number" step="0.1" placeholder="75.5" value={formData.weight || ''} onChange={(e) => setFormData({...formData, weight: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">BMI</label><input type="number" step="0.1" placeholder="24.5" value={formData.bmi || ''} onChange={(e) => setFormData({...formData, bmi: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /><p className="text-xs text-gray-500 mt-1">Calcolato da Airtable</p></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Circonferenze</label><input type="text" placeholder="Vita: 85cm, Fianchi: 100cm" value={formData.circumferences || ''} onChange={(e) => setFormData({...formData, circumferences: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
-                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Note visita</label><textarea rows={3} placeholder="Annotazioni..." value={formData.notes || ''} onChange={(e) => setFormData({...formData, notes: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-orange-400 focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Data visita *</label><input type="date" value={formData.date || new Date().toISOString().split('T')[0]} onChange={(e) => setFormData({...formData, date: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg) *</label><input type="number" step="0.1" placeholder="75.5" value={formData.weight || ''} onChange={(e) => setFormData({...formData, weight: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">BMI</label><input type="number" step="0.1" placeholder="24.5" value={formData.bmi || ''} onChange={(e) => setFormData({...formData, bmi: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /><p className="text-xs text-gray-500 mt-1">Calcolato da Airtable</p></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Circonferenze</label><input type="text" placeholder="Vita: 85cm, Fianchi: 100cm" value={formData.circumferences || ''} onChange={(e) => setFormData({...formData, circumferences: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Note visita</label><textarea rows={3} placeholder="Annotazioni..." value={formData.notes || ''} onChange={(e) => setFormData({...formData, notes: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                 </>
                             )}
                         </div>
                         <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
-                            <button onClick={isPatient ? savePatient : saveVisit} className="w-full bg-orange-400 text-white rounded-xl py-4 font-semibold hover:bg-orange-500">Salva {isEdit ? 'Modifiche' : isPatient ? 'Paziente' : 'Visita'}</button>
+                            <button onClick={isPatient ? savePatient : saveVisit} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500">Salva {isEdit ? 'Modifiche' : isPatient ? 'Paziente' : 'Visita'}</button>
                         </div>
                     </div>
                 );
@@ -240,10 +241,10 @@ if (showForm) {
                 const trend = p.visits.length >= 2 ? p.visits[0].weight - p.visits[p.visits.length - 1].weight : 0;
                 return (
                     <div className="min-h-screen bg-gray-50">
-                        <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-6">
+                        <div className="bg-gradient-to-r from-[#0F1A33] to-[#0F1A33] text-white p-6">
                             <button onClick={() => setView('list')} className="text-white mb-4">← Torna alla lista</button>
                             <div className="flex justify-between">
-                                <div><h2 className="text-2xl font-bold">{p.name}</h2><p className="text-orange-300 text-sm">{calcAge(p.birthDate)} anni{p.height ? ` • ${p.height} cm` : ''}</p></div>
+                                <div><h2 className="text-2xl font-bold">{p.name}</h2><p className="text-[#E8B49A] text-sm">{calcAge(p.birthDate)} anni{p.height ? ` • ${p.height} cm` : ''}</p></div>
                                 <div className="flex gap-2">
                                     <button onClick={(e) => { e.stopPropagation(); setFormData({ name: p.name, birthDate: p.birthDate, height: p.height, allergies: p.allergies, notes: p.notes, status: p.status }); setShowForm('editPatient'); }} className="bg-blue-500 p-2 rounded-lg hover:bg-blue-600"><IconEdit size={20} /></button>
                                     <button onClick={(e) => delPatient(p.id, e)} className="bg-red-500 p-2 rounded-lg hover:bg-red-600"><IconTrash size={20} /></button>
@@ -255,8 +256,8 @@ if (showForm) {
                             {p.allergies && <div className="bg-red-50 border-l-4 border-red-400 rounded-r-2xl p-4"><p className="text-xs font-medium text-red-800 mb-1">⚠️ ALLERGIE / INTOLLERANZE / PATOLOGIE / ESAMI</p><p className="text-sm text-red-700 font-semibold">{p.allergies}</p></div>}
                             {p.notes && <div className="bg-blue-50 rounded-2xl p-4"><p className="text-xs font-medium text-blue-800 mb-2">📝 Note principali</p><p className="text-sm text-gray-700">{p.notes}</p></div>}
                             {p.visits.length > 0 && <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconActivity size={18} />Andamento peso totale</h3><div className="flex items-center gap-4"><div className="text-3xl font-bold text-gray-800">{p.visits[0].weight} kg</div>{trend !== 0 && <div className={`flex items-center gap-1 ${trend < 0 ? 'text-green-600' : 'text-red-600'}`}>{trend < 0 ? <IconTrendDown size={20} /> : <IconTrendUp size={20} />}<span className="font-semibold">{Math.abs(trend).toFixed(1)} kg</span></div>}</div></div>}
-                            <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconCalendar size={18} />Storico visite</h3>{p.visits.length === 0 ? <p className="text-gray-400 text-sm text-center py-4">Nessuna visita registrata</p> : <div className="space-y-3">{p.visits.map((v, i) => <div key={i} className="border-l-2 border-slate-300 pl-4 py-2 relative"><div className="absolute right-0 top-2 flex gap-2"><button onClick={(e) => { e.stopPropagation(); setFormData({ date: v.date, weight: v.weight.toString(), bmi: v.bmi || '', circumferences: v.circumferences || '', notes: v.notes || '' }); setEditingIdx(i); setShowForm('editVisit'); }} className="text-blue-500 hover:text-blue-700"><IconEdit size={16} /></button><button onClick={(e) => delVisit(p.id, i, e)} className="text-red-500 hover:text-red-700"><IconTrash size={16} /></button></div><div className="flex justify-between pr-16 mb-2"><p className="font-medium text-gray-800">{new Date(v.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p><span className="text-slate-700 font-semibold">{v.weight} kg</span></div>{v.bmi && <div className="mb-2"><span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getBMIColor(v.bmi)}`}>BMI: {v.bmi} - {getBMILabel(v.bmi)}</span></div>}{v.circumferences && <p className="text-xs text-gray-600 mb-1">{v.circumferences}</p>}{v.notes && <p className="text-sm text-gray-700 italic">{v.notes}</p>}</div>)}</div>}</div>
-                            <button onClick={() => { setFormData({ date: new Date().toISOString().split('T')[0], weight: '', bmi: '', circumferences: '', notes: '' }); setShowForm('addVisit'); }} className="w-full bg-orange-400 text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={20} />Nuova visita</button>
+                            <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconCalendar size={18} />Storico visite</h3>{p.visits.length === 0 ? <p className="text-gray-400 text-sm text-center py-4">Nessuna visita registrata</p> : <div className="space-y-3">{p.visits.map((v, i) => <div key={i} className="border-l-2 border-slate-300 pl-4 py-2 relative"><div className="absolute right-0 top-2 flex gap-2"><button onClick={(e) => { e.stopPropagation(); setFormData({ date: v.date, weight: v.weight.toString(), bmi: v.bmi || '', circumferences: v.circumferences || '', notes: v.notes || '' }); setEditingIdx(i); setShowForm('editVisit'); }} className="text-blue-500 hover:text-blue-700"><IconEdit size={16} /></button><button onClick={(e) => delVisit(p.id, i, e)} className="text-red-500 hover:text-red-700"><IconTrash size={16} /></button></div><div className="flex justify-between pr-16 mb-2"><p className="font-medium text-gray-800">{new Date(v.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p><span className="text-[#0F1A33] font-semibold">{v.weight} kg</span></div>{v.bmi && <div className="mb-2"><span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getBMIColor(v.bmi)}`}>BMI: {v.bmi} - {getBMILabel(v.bmi)}</span></div>}{v.circumferences && <p className="text-xs text-gray-600 mb-1">{v.circumferences}</p>}{v.notes && <p className="text-sm text-gray-700 italic">{v.notes}</p>}</div>)}</div>}</div>
+                            <button onClick={() => { setFormData({ date: new Date().toISOString().split('T')[0], weight: '', bmi: '', circumferences: '', notes: '' }); setShowForm('addVisit'); }} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={20} />Nuova visita</button>
                         </div>
                     </div>
                 );
@@ -265,12 +266,12 @@ if (showForm) {
             if (view === 'settings') {
                 return (
                     <div className="min-h-screen bg-gray-50">
-                        <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-6"><button onClick={() => setView('list')} className="text-white mb-4">← Torna indietro</button><h2 className="text-2xl font-bold">Come usare NutriDesk</h2></div>
+                        <div className="bg-gradient-to-r from-[#0F1A33] to-[#0F1A33] text-white p-6"><button onClick={() => setView('list')} className="text-white mb-4">← Torna indietro</button><h2 className="text-2xl font-bold">Come usare NutriDesk</h2></div>
                         <div className="p-4 space-y-4">
-                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3 text-lg text-slate-700">📱 Dall'app mobile</h3><div className="space-y-3 text-sm text-gray-700"><div className="flex gap-3"><span className="font-bold text-orange-400 flex-shrink-0">1.</span><p><strong>Aggiungi un paziente:</strong> Tocca "+ Nuovo paziente" in basso. Compila i campi e salva.</p></div><div className="flex gap-3"><span className="font-bold text-orange-400 flex-shrink-0">2.</span><p><strong>Aggiungi una visita:</strong> Apri il paziente e tocca "+ Nuova visita". Inserisci peso, BMI, circonferenze e note.</p></div><div className="flex gap-3"><span className="font-bold text-orange-400 flex-shrink-0">3.</span><p><strong>Cerca rapidamente:</strong> Usa la barra di ricerca in alto per trovare un paziente per nome, allergie o note.</p></div><div className="flex gap-3"><span className="font-bold text-orange-400 flex-shrink-0">4.</span><p><strong>Filtra per stato:</strong> Usa i pulsanti per vedere solo Attivi, Alert 30gg, Alert 60gg o Conclusi.</p></div><div className="flex gap-3"><span className="font-bold text-orange-400 flex-shrink-0">5.</span><p><strong>Modifica/Elimina:</strong> Nella scheda paziente o visita, usa le icone matita (modifica) o cestino (elimina).</p></div></div></div>
-                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3 text-lg text-slate-700">💻 Da computer (Airtable)</h3><p className="text-sm text-gray-700 mb-3">Puoi gestire tutti i dati anche da PC su Airtable. Le modifiche si sincronizzano automaticamente con l'app.</p><button className="w-full bg-orange-100 text-orange-700 rounded-xl py-3 font-medium hover:bg-orange-200 transition mb-3 border-2 border-orange-200">Apri Airtable</button><a href="https://tuosito.com/guida-airtable" target="_blank" rel="noopener noreferrer" className="block w-full bg-blue-50 text-blue-700 rounded-xl py-3 font-medium text-center border-2 border-blue-200 hover:bg-blue-100 transition">📚 Guida completa Setup Airtable</a></div>
+                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3 text-lg text-[#0F1A33]">📱 Dall'app mobile</h3><div className="space-y-3 text-sm text-gray-700"><div className="flex gap-3"><span className="font-bold text-[#E8B49A] flex-shrink-0">1.</span><p><strong>Aggiungi un paziente:</strong> Tocca "+ Nuovo paziente" in basso. Compila i campi e salva.</p></div><div className="flex gap-3"><span className="font-bold text-[#E8B49A] flex-shrink-0">2.</span><p><strong>Aggiungi una visita:</strong> Apri il paziente e tocca "+ Nuova visita". Inserisci peso, BMI, circonferenze e note.</p></div><div className="flex gap-3"><span className="font-bold text-[#E8B49A] flex-shrink-0">3.</span><p><strong>Cerca rapidamente:</strong> Usa la barra di ricerca in alto per trovare un paziente per nome, allergie o note.</p></div><div className="flex gap-3"><span className="font-bold text-[#E8B49A] flex-shrink-0">4.</span><p><strong>Filtra per stato:</strong> Usa i pulsanti per vedere solo Attivi, Alert 30gg, Alert 60gg o Conclusi.</p></div><div className="flex gap-3"><span className="font-bold text-[#E8B49A] flex-shrink-0">5.</span><p><strong>Modifica/Elimina:</strong> Nella scheda paziente o visita, usa le icone matita (modifica) o cestino (elimina).</p></div></div></div>
+                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3 text-lg text-[#0F1A33]">💻 Da computer (Airtable)</h3><p className="text-sm text-gray-700 mb-3">Puoi gestire tutti i dati anche da PC su Airtable. Le modifiche si sincronizzano automaticamente con l'app.</p><button className="w-full bg-[#FBF0ED] text-[#E8B49A] rounded-xl py-3 font-medium hover:bg-orange-200 transition mb-3 border-2 border-orange-200">Apri Airtable</button><a href="https://tuosito.com/guida-airtable" target="_blank" rel="noopener noreferrer" className="block w-full bg-blue-50 text-blue-700 rounded-xl py-3 font-medium text-center border-2 border-blue-200 hover:bg-blue-100 transition">📚 Guida completa Setup Airtable</a></div>
                             <div className="bg-amber-50 rounded-2xl p-5 border-l-4 border-amber-400"><h3 className="font-semibold mb-2 text-amber-900">⚠️ Alert automatici</h3><p className="text-sm text-amber-800">L'app ti avvisa automaticamente quando un paziente non viene da tempo:<br/><span className="inline-block mt-2"><strong>🟡 30-59 giorni</strong> - Icona gialla</span><br/><span className="inline-block"><strong>🔴 60+ giorni</strong> - Icona rossa</span></p></div>
-                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3">🔒 Sicurezza</h3><p className="text-sm text-gray-600 mb-3">Il tuo PIN protegge l'accesso ai dati dei pazienti.</p><button onClick={() => setShowChangePin(true)} className="w-full border-2 border-orange-300 text-orange-600 rounded-xl py-3 font-medium hover:bg-orange-50 transition">Cambia PIN</button></div>
+                            <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3">🔒 Sicurezza</h3><p className="text-sm text-gray-600 mb-3">Il tuo PIN protegge l'accesso ai dati dei pazienti.</p><button onClick={() => setShowChangePin(true)} className="w-full border-2 border-[#E8B49A] text-orange-600 rounded-xl py-3 font-medium hover:bg-orange-50 transition">Cambia PIN</button></div>
                             <button onClick={() => setIsLocked(true)} className="w-full bg-red-50 text-red-600 rounded-xl py-3 font-medium hover:bg-red-100 transition">Blocca app</button>
                         </div>
                     </div>
@@ -279,15 +280,15 @@ if (showForm) {
 
             return (
                 <div className="min-h-screen bg-gray-50 pb-24">
-                    <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white p-6 shadow-lg">
+                    <div className="bg-gradient-to-r from-[#0F1A33] to-[#0F1A33] text-white p-6 shadow-lg">
                         <div className="flex justify-between items-center mb-4"><h1 className="text-2xl font-bold">NutriDesk FB</h1><button onClick={() => setView('settings')} className="bg-white/20 p-2 rounded-lg hover:bg-white/30"><IconSettings size={20} /></button></div>
-                        <div className="relative"><div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-600"><IconSearch size={20} /></div><input type="text" placeholder="Cerca paziente..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-11 pr-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-300" /></div>
+                        <div className="relative"><div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0F1A33]"><IconSearch size={20} /></div><input type="text" placeholder="Cerca paziente..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-11 pr-4 py-3 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#E8B49A]" /></div>
                     </div>
                     <div className="bg-white p-4 shadow-sm flex gap-2 overflow-x-auto">
-                        {[{k: 'all', l: 'Tutti'}, {k: 'active', l: 'Attivi'}, {k: 'alert30', l: 'Alert 30gg'}, {k: 'alert60', l: 'Alert 60gg'}, {k: 'completed', l: 'Conclusi'}].map(s => <button key={s.k} onClick={() => setFilterStatus(s.k)} className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${filterStatus === s.k ? 'bg-slate-700 text-white' : 'bg-orange-50 text-orange-700 border-2 border-orange-200'}`}>{s.l} ({filtered.filter(p => { if (s.k === 'all') return true; if (s.k === 'alert30') return p.daysSinceLastVisit >= 30 && p.daysSinceLastVisit < 60; if (s.k === 'alert60') return p.daysSinceLastVisit >= 60; return p.status === s.k; }).length})</button>)}
+                        {[{k: 'all', l: 'Tutti'}, {k: 'active', l: 'Attivi'}, {k: 'alert30', l: 'Alert 30gg'}, {k: 'alert60', l: 'Alert 60gg'}, {k: 'completed', l: 'Conclusi'}].map(s => <button key={s.k} onClick={() => setFilterStatus(s.k)} className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${filterStatus === s.k ? 'bg-[#0F1A33] text-white' : 'bg-orange-50 text-[#E8B49A] border-2 border-orange-200'}`}>{s.l} ({filtered.filter(p => { if (s.k === 'all') return true; if (s.k === 'alert30') return p.daysSinceLastVisit >= 30 && p.daysSinceLastVisit < 60; if (s.k === 'alert60') return p.daysSinceLastVisit >= 60; return p.status === s.k; }).length})</button>)}
                     </div>
                     <div className="p-4 space-y-3">{filtered.length === 0 ? <div className="text-center py-12 text-gray-400"><IconUser size={48} /><p className="mt-3">Nessun paziente. Tocca "+ Nuovo paziente"!</p></div> : filtered.map(p => <div key={p.id} onClick={() => { setSelectedPatient(p.id); setView('detail'); }} className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition"><div className="flex justify-between items-start mb-2"><div><h3 className="font-semibold text-lg">{p.name}</h3><p className="text-sm text-gray-500">{calcAge(p.birthDate)} anni</p></div><div className="flex items-center gap-2">{p.daysSinceLastVisit > 60 && <div className="text-xl">🔴</div>}{p.daysSinceLastVisit >= 30 && p.daysSinceLastVisit < 60 && <div className="text-xl">🟡</div>}<IconChevronRight size={20} /></div></div><span className={`px-2 py-1 rounded-full text-xs font-medium ${p.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{p.status === 'active' ? 'Attivo' : 'Concluso'}</span><div className="flex justify-between text-xs text-gray-500 pt-2 mt-2 border-t"><span>Ultima: {p.daysSinceLastVisit || 0} gg fa</span><span>{p.totalVisits} visite</span></div></div>)}</div>
-                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4"><button onClick={() => { setFormData({ name: '', birthDate: '', height: '', allergies: '', notes: '', status: 'active' }); setShowForm('addPatient'); }} className="w-full bg-orange-400 text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={24} />Nuovo paziente</button></div>
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4"><button onClick={() => { setFormData({ name: '', birthDate: '', height: '', allergies: '', notes: '', status: 'active' }); setShowForm('addPatient'); }} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={24} />Nuovo paziente</button></div>
                 </div>
             );
         };
@@ -297,3 +298,4 @@ if (showForm) {
 </body>
 
 </html>
+
