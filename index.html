@@ -148,7 +148,7 @@
                                 {currentPin === '1234' && (
                                     <div className="mt-4 bg-orange-50 border-l-4 border-[#E8B49A] p-3 text-left">
                                         <p className="text-xs text-[#0F1A33] font-medium">PIN temporaneo: 1234</p>
-                                        <p className="text-xs text-[#E8B49A] mt-1">Modificalo nelle Impostazioni al primo accesso</p>
+                                        <p className="text-xs text-orange-300 mt-1">Modificalo nelle Impostazioni al primo accesso</p>
                                     </div>
                                 )}
                             </div>
@@ -229,7 +229,7 @@ if (showForm) {
                             )}
                         </div>
                         <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
-                            <button onClick={isPatient ? savePatient : saveVisit} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500">Salva {isEdit ? 'Modifiche' : isPatient ? 'Paziente' : 'Visita'}</button>
+                            <button onClick={isPatient ? savePatient : saveVisit} className="w-full bg-[#E8B49A] text-[#0F1A33] rounded-xl py-4 font-semibold hover:bg-orange-500">Salva {isEdit ? 'Modifiche' : isPatient ? 'Paziente' : 'Visita'}</button>
                         </div>
                     </div>
                 );
@@ -257,7 +257,7 @@ if (showForm) {
                             {p.notes && <div className="bg-blue-50 rounded-2xl p-4"><p className="text-xs font-medium text-blue-800 mb-2">📝 Note principali</p><p className="text-sm text-gray-700">{p.notes}</p></div>}
                             {p.visits.length > 0 && <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconActivity size={18} />Andamento peso totale</h3><div className="flex items-center gap-4"><div className="text-3xl font-bold text-gray-800">{p.visits[0].weight} kg</div>{trend !== 0 && <div className={`flex items-center gap-1 ${trend < 0 ? 'text-green-600' : 'text-red-600'}`}>{trend < 0 ? <IconTrendDown size={20} /> : <IconTrendUp size={20} />}<span className="font-semibold">{Math.abs(trend).toFixed(1)} kg</span></div>}</div></div>}
                             <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconCalendar size={18} />Storico visite</h3>{p.visits.length === 0 ? <p className="text-gray-400 text-sm text-center py-4">Nessuna visita registrata</p> : <div className="space-y-3">{p.visits.map((v, i) => <div key={i} className="border-l-2 border-slate-300 pl-4 py-2 relative"><div className="absolute right-0 top-2 flex gap-2"><button onClick={(e) => { e.stopPropagation(); setFormData({ date: v.date, weight: v.weight.toString(), bmi: v.bmi || '', circumferences: v.circumferences || '', notes: v.notes || '' }); setEditingIdx(i); setShowForm('editVisit'); }} className="text-blue-500 hover:text-blue-700"><IconEdit size={16} /></button><button onClick={(e) => delVisit(p.id, i, e)} className="text-red-500 hover:text-red-700"><IconTrash size={16} /></button></div><div className="flex justify-between pr-16 mb-2"><p className="font-medium text-gray-800">{new Date(v.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p><span className="text-[#0F1A33] font-semibold">{v.weight} kg</span></div>{v.bmi && <div className="mb-2"><span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getBMIColor(v.bmi)}`}>BMI: {v.bmi} - {getBMILabel(v.bmi)}</span></div>}{v.circumferences && <p className="text-xs text-gray-600 mb-1">{v.circumferences}</p>}{v.notes && <p className="text-sm text-gray-700 italic">{v.notes}</p>}</div>)}</div>}</div>
-                            <button onClick={() => { setFormData({ date: new Date().toISOString().split('T')[0], weight: '', bmi: '', circumferences: '', notes: '' }); setShowForm('addVisit'); }} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={20} />Nuova visita</button>
+                            <button onClick={() => { setFormData({ date: new Date().toISOString().split('T')[0], weight: '', bmi: '', circumferences: '', notes: '' }); setShowForm('addVisit'); }} className="w-full bg-[#E8B49A] text-[#0F1A33] rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={20} />Nuova visita</button>
                         </div>
                     </div>
                 );
@@ -288,7 +288,7 @@ if (showForm) {
                         {[{k: 'all', l: 'Tutti'}, {k: 'active', l: 'Attivi'}, {k: 'alert30', l: 'Alert 30gg'}, {k: 'alert60', l: 'Alert 60gg'}, {k: 'completed', l: 'Conclusi'}].map(s => <button key={s.k} onClick={() => setFilterStatus(s.k)} className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${filterStatus === s.k ? 'bg-[#0F1A33] text-white' : 'bg-orange-50 text-[#E8B49A] border-2 border-orange-200'}`}>{s.l} ({filtered.filter(p => { if (s.k === 'all') return true; if (s.k === 'alert30') return p.daysSinceLastVisit >= 30 && p.daysSinceLastVisit < 60; if (s.k === 'alert60') return p.daysSinceLastVisit >= 60; return p.status === s.k; }).length})</button>)}
                     </div>
                     <div className="p-4 space-y-3">{filtered.length === 0 ? <div className="text-center py-12 text-gray-400"><IconUser size={48} /><p className="mt-3">Nessun paziente. Tocca "+ Nuovo paziente"!</p></div> : filtered.map(p => <div key={p.id} onClick={() => { setSelectedPatient(p.id); setView('detail'); }} className="bg-white rounded-2xl p-4 shadow-sm cursor-pointer hover:shadow-md transition"><div className="flex justify-between items-start mb-2"><div><h3 className="font-semibold text-lg">{p.name}</h3><p className="text-sm text-gray-500">{calcAge(p.birthDate)} anni</p></div><div className="flex items-center gap-2">{p.daysSinceLastVisit > 60 && <div className="text-xl">🔴</div>}{p.daysSinceLastVisit >= 30 && p.daysSinceLastVisit < 60 && <div className="text-xl">🟡</div>}<IconChevronRight size={20} /></div></div><span className={`px-2 py-1 rounded-full text-xs font-medium ${p.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{p.status === 'active' ? 'Attivo' : 'Concluso'}</span><div className="flex justify-between text-xs text-gray-500 pt-2 mt-2 border-t"><span>Ultima: {p.daysSinceLastVisit || 0} gg fa</span><span>{p.totalVisits} visite</span></div></div>)}</div>
-                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4"><button onClick={() => { setFormData({ name: '', birthDate: '', height: '', allergies: '', notes: '', status: 'active' }); setShowForm('addPatient'); }} className="w-full bg-[#E8B49A] text-white rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={24} />Nuovo paziente</button></div>
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4"><button onClick={() => { setFormData({ name: '', birthDate: '', height: '', allergies: '', notes: '', status: 'active' }); setShowForm('addPatient'); }} className="w-full bg-[#E8B49A] text-[#0F1A33] rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={24} />Nuovo paziente</button></div>
                 </div>
             );
         };
@@ -298,4 +298,5 @@ if (showForm) {
 </body>
 
 </html>
+
 
