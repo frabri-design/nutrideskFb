@@ -37,7 +37,12 @@
         const IconUser = ({size=48}) => <svg style={{width: size, height: size}} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
         
         const App = () => {
-            const [isLocked, setIsLocked] = useState(true);
+            const [isLocked, setIsLocked] = useState(() => {
+    const lastActivity = localStorage.getItem('nutridesk_lastActivity');
+    if (!lastActivity) return true;
+    const fiveMinutes = 5 * 60 * 1000;
+    return (Date.now() - parseInt(lastActivity)) > fiveMinutes;
+});
             const [currentPin, setCurrentPin] = useState(() => localStorage.getItem('nutridesk_pin') || '1234');
             const [pin, setPin] = useState('');
             const [showChangePin, setShowChangePin] = useState(false);
@@ -51,6 +56,21 @@
             const [formData, setFormData] = useState({});
             const [patients, setPatients] = useState([]);
 
+            // Aggiorna timestamp attività ogni azione
+React.useEffect(() => {
+    const updateActivity = () => {
+        if (!isLocked) {
+            localStorage.setItem('nutridesk_lastActivity', Date.now().toString());
+        }
+    };
+    window.addEventListener('click', updateActivity);
+    window.addEventListener('touchstart', updateActivity);
+    return () => {
+        window.removeEventListener('click', updateActivity);
+        window.removeEventListener('touchstart', updateActivity);
+    };
+}, [isLocked]);
+            
             const calcAge = (bd) => {
                 const t = new Date(), b = new Date(bd);
                 let a = t.getFullYear() - b.getFullYear();
@@ -160,7 +180,11 @@
                                 onChange={(e) => setPin(e.target.value)}
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter') {
-                                        if (pin === currentPin) { setIsLocked(false); setPin(''); }
+                                        if (pin === currentPin) { 
+    setIsLocked(false); 
+    setPin(''); 
+    localStorage.setItem('nutridesk_lastActivity', Date.now().toString());
+}
                                         else { alert('PIN errato'); setPin(''); }
                                     }
                                 }}
@@ -272,6 +296,10 @@ if (showForm) {
                             <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3 text-lg text-[#0F1A33]">💻 Da computer (Airtable)</h3><p className="text-sm text-gray-700 mb-3">Puoi gestire tutti i dati anche da PC su Airtable. Le modifiche si sincronizzano automaticamente con l'app.</p><button className="w-full bg-[#FBF0ED] text-[#E8B49A] rounded-xl py-3 font-medium hover:bg-orange-200 transition mb-3 border-2 border-orange-200">Apri Airtable</button><a href="https://frabri-design.github.io/nutrideskFb/guida-airtable.html" target="_blank" rel="noopener noreferrer" className="block w-full bg-blue-50 text-blue-700 rounded-xl py-3 font-medium text-center border-2 border-blue-200 hover:bg-blue-100 transition">📚 Guida completa Setup Airtable</a></div>
                             <div className="bg-amber-50 rounded-2xl p-5 border-l-4 border-amber-400"><h3 className="font-semibold mb-2 text-amber-900">⚠️ Alert automatici</h3><p className="text-sm text-amber-800">L'app ti avvisa automaticamente quando un paziente non viene da tempo:<br/><span className="inline-block mt-2"><strong>🟡 30-59 giorni</strong> - Icona gialla</span><br/><span className="inline-block"><strong>🔴 60+ giorni</strong> - Icona rossa</span></p></div>
                             <div className="bg-white rounded-2xl p-5 shadow-sm"><h3 className="font-semibold mb-3">🔒 Sicurezza</h3><p className="text-sm text-gray-600 mb-3">Il tuo PIN protegge l'accesso ai dati dei pazienti.</p><button onClick={() => setShowChangePin(true)} className="w-full border-2 border-[#E8B49A] text-orange-600 rounded-xl py-3 font-medium hover:bg-orange-50 transition">Cambia PIN</button></div>
+                            <div className="bg-gray-50 rounded-2xl p-5 text-center border-2 border-gray-100">
+    <p className="text-xs text-gray-500 mb-2">© 2026 Dott.ssa Francesca Briscia</p>
+    <p className="text-xs text-gray-400">NutriDesk FB - Tutti i diritti riservati</p>
+    </div>
                             <button onClick={() => setIsLocked(true)} className="w-full bg-red-50 text-red-600 rounded-xl py-3 font-medium hover:bg-red-100 transition">Blocca app</button>
                         </div>
                     </div>
@@ -298,6 +326,7 @@ if (showForm) {
 </body>
 
 </html>
+
 
 
 
