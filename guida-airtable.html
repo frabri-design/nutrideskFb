@@ -98,163 +98,51 @@
         
         <p>Questa guida ti accompagna passo-passo nella creazione del tuo database Airtable per gestire pazienti e visite.</p>
 
-        <h2>🎯 STEP 1 - Crea la Base Airtable</h2>
-        <div class="step">
-            <ol>
-                <li>Vai su <strong>https://airtable.com</strong> e crea un account gratuito</li>
-                <li>Clicca <strong>"Create a base"</strong> → <strong>"Start from scratch"</strong></li>
-                <li>Rinomina la base: <strong>"NutriDesk Database"</strong></li>
-            </ol>
-        </div>
+        <h2>🎯 STEP 1 - Crea un account Airtable</h2>
 
-        <h2>📋 STEP 2 - Tabella PAZIENTI</h2>
-        
-        <h3>Rinomina la prima tabella</h3>
-        <p>Clicca su "Table 1" → Rinomina in <strong>"Pazienti"</strong></p>
+<div class="step">
+    <ol>
+        <li>Vai su <strong>https://airtable.com</strong></li>
+        <li>Clicca <strong>"Sign up"</strong> per creare un account gratuito</li>
+        <li>Verifica la tua email</li>
+        <li>Accedi al tuo account Airtable</li>
+    </ol>
+</div>
 
-        <h3>Aggiungi questi campi (clicca + per aggiungere colonne):</h3>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome campo</th>
-                    <th>Tipo</th>
-                    <th>Note</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Nome Cognome</strong></td>
-                    <td>Single line text</td>
-                    <td>Campo principale</td>
-                </tr>
-                <tr>
-                    <td><strong>Data di nascita</strong></td>
-                    <td>Date</td>
-                    <td>Formato italiano</td>
-                </tr>
-                <tr>
-                    <td><strong>Altezza</strong></td>
-                    <td>Number</td>
-                    <td>Integer (es. 170 cm)</td>
-                </tr>
-                <tr>
-                    <td><strong>Stato</strong></td>
-                    <td>Single select</td>
-                    <td>Opzioni: <em>Attivo</em>, <em>Concluso</em></td>
-                </tr>
-                <tr>
-                    <td><strong>Allergie / Intolleranze / Patologie / Esami</strong></td>
-                    <td>Long text</td>
-                    <td>Campo libero</td>
-                </tr>
-                <tr>
-                    <td><strong>Note</strong></td>
-                    <td>Long text</td>
-                    <td>Obiettivi, annotazioni</td>
-                </tr>
-                <tr>
-                    <td><strong>Visite</strong></td>
-                    <td>Link to another record</td>
-                    <td>Collegamento (creerai dopo)</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="success">
+    <p>✅ Hai l'account? Perfetto! Ora duplicherai il template già pronto.</p>
+</div>
 
-        <h2>🏥 STEP 3 - Tabella VISITE</h2>
-        
-        <div class="step">
-            <ol>
-                <li>Clicca <strong>+ Add table</strong> in basso</li>
-                <li>Rinomina in <strong>"Visite"</strong></li>
-                <li>Aggiungi i campi dalla tabella sotto</li>
-            </ol>
-        </div>
+       <h2>📦 STEP 2 - Usa il Template Airtable</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome campo</th>
-                    <th>Tipo</th>
-                    <th>Note</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Paziente</strong></td>
-                    <td>Link to another record</td>
-                    <td>Collega a "Pazienti"</td>
-                </tr>
-                <tr>
-                    <td><strong>Data visita</strong></td>
-                    <td>Date</td>
-                    <td>Formato italiano</td>
-                </tr>
-                <tr>
-                    <td><strong>Peso</strong></td>
-                    <td>Number</td>
-                    <td>Decimale (es. 75.5 kg)</td>
-                </tr>
-                <tr>
-                    <td><strong>BMI</strong></td>
-                    <td>Formula</td>
-                    <td>Calcolato automaticamente</td>
-                </tr>
-                <tr>
-                    <td><strong>Circonferenze</strong></td>
-                    <td>Long text</td>
-                    <td>Campo libero</td>
-                </tr>
-                <tr>
-                    <td><strong>Note visita</strong></td>
-                    <td>Long text</td>
-                    <td>Annotazioni</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="success">
+    <h3>✅ Il database è già pronto per te!</h3>
+    <p>Ho preparato un template Airtable completo con tutte le tabelle e formule già configurate.</p>
+</div>
 
-        <h3>Formula BMI (campo "BMI"):</h3>
-        <div class="warning">
-            <strong>⚠️ Importante:</strong> Copia questa formula ESATTAMENTE come è scritta
-        </div>
-        <pre><code>IF(
-  AND({Peso}, LOOKUP("Altezza", {Paziente})),
-  ROUND({Peso} / POWER(LOOKUP("Altezza", {Paziente}) / 100, 2), 1),
-  BLANK()
-)</code></pre>
+<div class="step">
+    <h3>Come duplicare il template:</h3>
+    <ol>
+        <li>Clicca su questo link: <a href="IL_TUO_LINK_TEMPLATE" style="color: #E8B49A; font-weight: bold;" target="_blank">Duplica Template NutriDesk</a></li>
+        <li>Airtable ti chiederà di accedere o creare un account</li>
+        <li>Clicca <strong>"Copy base"</strong></li>
+        <li>Il database si duplica nel tuo account!</li>
+        <li>Rinominalo come preferisci (es. "I miei Pazienti")</li>
+    </ol>
+</div>
 
-        <h2>🔄 STEP 4 - Campi Automatici (Pazienti)</h2>
-        
-        <p>Torna alla tabella <strong>Pazienti</strong> e aggiungi questi campi automatici:</p>
+<div class="warning">
+    <h3>📋 Cosa contiene il template:</h3>
+    <ul>
+        <li>✅ Tabella <strong>Pazienti</strong> con tutti i campi</li>
+        <li>✅ Tabella <strong>Visite</strong> con calcolo BMI automatico</li>
+        <li>✅ Formule per giorni dall'ultima visita</li>
+        <li>✅ Rollup per numero visite e date</li>
+        <li>✅ Tutto già configurato e pronto all'uso!</li>
+    </ul>
+</div>
 
-        <h3>1. Data ultima visita (Rollup)</h3>
-        <div class="step">
-            <ul>
-                <li><strong>Type:</strong> Rollup</li>
-                <li><strong>Link to record:</strong> Visite</li>
-                <li><strong>Field:</strong> Data visita</li>
-                <li><strong>Aggregation:</strong> MAX(values)</li>
-            </ul>
-        </div>
-
-        <h3>2. Numero visite (Rollup)</h3>
-        <div class="step">
-            <ul>
-                <li><strong>Type:</strong> Rollup</li>
-                <li><strong>Link to record:</strong> Visite</li>
-                <li><strong>Field:</strong> Data visita</li>
-                <li><strong>Aggregation:</strong> COUNTA(values)</li>
-            </ul>
-        </div>
-
-        <h3>3. Giorni dall'ultima visita (Formula)</h3>
-        <pre><code>IF(
-  {Data ultima visita},
-  DATETIME_DIFF(TODAY(), {Data ultima visita}, 'days'),
-  0
-)</code></pre>
-
-        <h2>🔐 STEP 5 - Ottieni l'API Key</h2>
+        <h2>🔐 STEP 3 - Ottieni l'API Key</h2>
         
         <div class="warning">
             <strong>⚠️ Conserva questa chiave in modo sicuro!</strong> La vedrai solo una volta.
@@ -272,7 +160,7 @@
             </ol>
         </div>
 
-        <h2>🆔 STEP 6 - Trova il BASE ID</h2>
+        <h2>🆔 STEP 4 - Trova il BASE ID</h2>
         
         <div class="step">
             <ol>
@@ -317,7 +205,10 @@
         <hr style="margin: 40px 0; border: none; border-top: 2px solid #E8B49A;">
         
         <p style="text-align: center; color: #666; font-size: 14px;">
-            <strong>NutriDesk FB</strong> - La tua nutrizionista in tasca<br>
+            <div className="bg-gray-50 rounded-2xl p-5 text-center border-2 border-gray-100">
+    <p className="text-xs text-gray-500 mb-2">© 2026 Dott.ssa Francesca Briscia</p>
+    <p className="text-xs text-gray-400">NutriDesk FB - Tutti i diritti riservati</p>
+</div>
             Per supporto: <a href="https://airtable.com/support" style="color: #E8B49A;">Documentazione Airtable</a>
         </p>
     </div>
