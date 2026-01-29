@@ -121,15 +121,7 @@ const loadFromAirtable = async () => {
     try {
         const config = getAirtableConfig();
         const patientsData = await airtableRequest(config.patientsTableId);
-        const visitsData = await airtableRequest(config.visitsTableId);
-const saveSetup = () => {
-    if (!setupData.apiKey || !setupData.baseId || !setupData.patientsTableId || !setupData.visitsTableId) {
-        return alert('Tutti i campi sono obbligatori');
-    }
-    saveAirtableConfig(setupData.apiKey, setupData.baseId, setupData.patientsTableId, setupData.visitsTableId);
-    setShowSetup(false);
-    loadFromAirtable();
-};        
+        const visitsData = await airtableRequest(config.visitsTableId);     
         const patientsMap = patientsData.records.map(rec => {
             const fields = rec.fields;
             const patientVisits = visitsData.records
@@ -146,7 +138,6 @@ const saveSetup = () => {
 
             const lastDate = patientVisits[0]?.date;
             const daysSince = lastDate ? Math.floor((new Date() - new Date(lastDate)) / 86400000) : 0;
-
             return {
                 id: rec.id,
                 name: fields['Nome e Cognome'] || '',
@@ -172,6 +163,14 @@ const saveSetup = () => {
         setLoading(false);
     }
 };
+            const saveSetup = () => {
+    if (!setupData.apiKey || !setupData.baseId || !setupData.patientsTableId || !setupData.visitsTableId) {
+        return alert('Tutti i campi sono obbligatori');
+    }
+    saveAirtableConfig(setupData.apiKey, setupData.baseId, setupData.patientsTableId, setupData.visitsTableId);
+    setShowSetup(false);
+    loadFromAirtable();
+};   
             const calcAge = (bd) => {
                 const t = new Date(), b = new Date(bd);
                 let a = t.getFullYear() - b.getFullYear();
@@ -370,11 +369,11 @@ if (showSetup) {
                     <input type="text" placeholder="appXXXXXXXX" value={setupData.baseId} onChange={(e) => setSetupData({...setupData, baseId: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-sm" />
                 </div>
                 <div className="bg-white rounded-2xl p-5 shadow-sm">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Table ID Pazienti *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pazienti *</label>
                     <input type="text" placeholder="tblXXXXXXXX" value={setupData.patientsTableId} onChange={(e) => setSetupData({...setupData, patientsTableId: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-sm" />
                 </div>
                 <div className="bg-white rounded-2xl p-5 shadow-sm">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Table ID Visite *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Visite *</label>
                     <input type="text" placeholder="tblXXXXXXXX" value={setupData.visitsTableId} onChange={(e) => setSetupData({...setupData, visitsTableId: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none text-sm" />
                 </div>
                 <button onClick={saveSetup} className="w-full bg-[#E8B49A] text-[#0F1A33] rounded-xl py-4 font-semibold hover:bg-orange-500">Salva e continua</button>
@@ -536,3 +535,4 @@ if (showForm) {
 </body>
 
 </html>
+
