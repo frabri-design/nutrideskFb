@@ -145,6 +145,7 @@ const loadFromAirtable = async () => {
                     date: v.fields['Data visita'] || '',
                     weight: parseFloat(v.fields.Peso) || 0,
                     bmi: v.fields.BMI || '',
+                    height: v.fields.Altezza || '',
                     circumferences: v.fields.Circonferenze || '',
                     notes: v.fields['Note visita'] || '',
                     airtableId: v.id
@@ -157,11 +158,11 @@ const loadFromAirtable = async () => {
                 id: rec.id,
                 name: fields['Nome e Cognome'] || '',
                 birthDate: fields['Data di nascita'] || '',
-                height: fields.Altezza || '',
+                height: patientVisits[0]?.height || '',
                 status: fields.Stato === 'Concluso' ? 'completed' : 'active',
                 allergies: fields['Allergie/Intolleranze/Patologie/Farmaci'] || '',
                 notes: fields['Note principali'] || '',
-                totalVisitsPurchased: fields['Visite totali'] || 0,
+                totalVisitsPurchased: fields['Numero visite totali'] || 0,
                 visits: patientVisits,
                 totalVisits: patientVisits.length,
                 remainingVisits: (fields['Visite rimanenti'] || 0),
@@ -220,7 +221,7 @@ const loadFromAirtable = async () => {
             'Stato': formData.status === 'completed' ? 'Concluso' : 'Attivo',
             'Allergie/Intolleranze/Patologie/Farmaci': formData.allergies || '',
             'Note principali': formData.notes || '',
-            'Visite totali': formData.totalVisitsPurchased ? parseInt(formData.totalVisitsPurchased) : 0
+            'Numero visite totali': formData.totalVisitsPurchased ? parseInt(formData.totalVisitsPurchased) : 0
         };
 
         const config = getAirtableConfig();
@@ -246,6 +247,7 @@ if (showForm === 'addPatient') {
         const airtableFields = {
             'Data visita': formData.date,
             'Paziente': [selectedPatient],
+            'Altezza': formData.height ? parseInt(formData.height) : null,
             'Peso': parseFloat(formData.weight),
             'BMI': formData.bmi ? parseFloat(formData.bmi) : null,
             'Circonferenze': formData.circumferences || '',
@@ -439,11 +441,12 @@ if (showForm) {
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Stato</label><select value={formData.status || 'active'} onChange={(e) => setFormData({...formData, status: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none"><option value="active">Attivo</option><option value="completed">Concluso</option></select></div>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Allergie / Intolleranze / Patologie / Farmaci</label><input type="text" placeholder="es. Lattosio" value={formData.allergies || ''} onChange={(e) => setFormData({...formData, allergies: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Note</label><textarea rows={3} placeholder="Obiettivi..." value={formData.notes || ''} onChange={(e) => setFormData({...formData, notes: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
-                               <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Visite totali pacchetto</label><input type="number" placeholder="7" value={formData.totalVisitsPurchased || ''} onChange={(e) => setFormData({...formData, totalVisitsPurchased: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Visite totali pacchetto</label><input type="number" placeholder="7" value={formData.totalVisitsPurchased || ''} onChange={(e) => setFormData({...formData, totalVisitsPurchased: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                 </>
                             ) : (
                                 <>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Data visita *</label><input type="date" value={formData.date || new Date().toISOString().split('T')[0]} onChange={(e) => setFormData({...formData, date: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
+                                    <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Altezza (cm)</label><input type="number" placeholder="170" value={formData.height || ''} onChange={(e) => setFormData({...formData, height: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Peso (kg) *</label><input type="number" step="0.1" placeholder="75.5" value={formData.weight || ''} onChange={(e) => setFormData({...formData, weight: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">BMI</label><input type="number" step="0.1" placeholder="24.5" value={formData.bmi || ''} onChange={(e) => setFormData({...formData, bmi: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /><p className="text-xs text-gray-500 mt-1">Calcolato da Airtable</p></div>
                                     <div className="bg-white rounded-2xl p-5 shadow-sm"><label className="block text-sm font-medium text-gray-700 mb-2">Circonferenze</label><input type="text" placeholder="Vita: 85cm, Fianchi: 100cm" value={formData.circumferences || ''} onChange={(e) => setFormData({...formData, circumferences: e.target.value})} className="w-full border-2 rounded-xl p-3 focus:border-[#E8B49A] focus:outline-none" /></div>
@@ -510,7 +513,13 @@ if (showForm) {
 )}
                             {p.notes && <div className="bg-blue-50 rounded-2xl p-4"><p className="text-xs font-medium text-blue-800 mb-2">📝 Note principali</p><p className="text-sm text-gray-700">{p.notes}</p></div>}
                             {p.visits.length > 0 && <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconActivity size={18} />Andamento peso totale</h3><div className="flex items-center gap-4"><div className="text-3xl font-bold text-gray-800">{p.visits[0].weight} kg</div>{trend !== 0 && <div className={`flex items-center gap-1 ${trend < 0 ? 'text-green-600' : 'text-red-600'}`}>{trend < 0 ? <IconTrendDown size={20} /> : <IconTrendUp size={20} />}<span className="font-semibold">{Math.abs(trend).toFixed(1)} kg</span></div>}</div></div>}
-                            <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconCalendar size={18} />Storico visite</h3>{p.visits.length === 0 ? <p className="text-gray-400 text-sm text-center py-4">Nessuna visita registrata</p> : <div className="space-y-3">{p.visits.map((v, i) => <div key={i} className="border-l-2 border-slate-300 pl-4 py-2 relative"><div className="absolute right-0 top-2 flex gap-2"><button onClick={(e) => { e.stopPropagation(); setFormData({ date: v.date, weight: v.weight.toString(), bmi: v.bmi || '', circumferences: v.circumferences || '', notes: v.notes || '' }); setEditingIdx(i); setShowForm('editVisit'); }} className="text-blue-500 hover:text-blue-700"><IconEdit size={16} /></button><button onClick={(e) => delVisit(p.id, i, e)} className="text-red-500 hover:text-red-700"><IconTrash size={16} /></button></div><div className="flex justify-between pr-16 mb-2"><p className="font-medium text-gray-800">{new Date(v.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p><span className="text-[#0F1A33] font-semibold">{v.weight} kg</span></div>{v.bmi && <div className="mb-2"><span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getBMIColor(v.bmi)}`}>BMI: {v.bmi} - {getBMILabel(v.bmi)}</span></div>}{v.circumferences && <p className="text-xs text-gray-600 mb-1">{v.circumferences}</p>}{v.notes && <p className="text-sm text-gray-700 italic">{v.notes}</p>}</div>)}</div>}</div>
+                            <div className="bg-white rounded-2xl p-4 shadow-sm"><h3 className="font-semibold mb-3 flex items-center gap-2"><IconCalendar size={18} />Storico visite</h3>{p.visits.length === 0 ? <p className="text-gray-400 text-sm text-center py-4">Nessuna visita registrata</p> : <div className="space-y-3">{p.visits.map((v, i) => <div key={i} className="border-l-2 border-slate-300 pl-4 py-2 relative"><div className="absolute right-0 top-2 flex gap-2"><button onClick={(e) => { e.stopPropagation(); setFormData({ date: v.date, height: v.height || '', weight: v.weight.toString(), bmi: v.bmi || '', circumferences: v.circumferences || '', notes: v.notes || '' }); setEditingIdx(i); setShowForm('editVisit'); }} className="text-blue-500 hover:text-blue-700"><IconEdit size={16} /></button><button onClick={(e) => delVisit(p.id, i, e)} className="text-red-500 hover:text-red-700"><IconTrash size={16} /></button></div><div className="flex justify-between pr-16 mb-2">
+    <div>
+        <p className="font-medium text-gray-800">{new Date(v.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        {v.height && <p className="text-xs text-gray-500">Altezza: {v.height} cm</p>}
+    </div>
+    <span className="text-[#0F1A33] font-semibold">{v.weight} kg</span>
+</div>{v.bmi && <div className="mb-2"><span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getBMIColor(v.bmi)}`}>BMI: {v.bmi} - {getBMILabel(v.bmi)}</span></div>}{v.circumferences && <p className="text-xs text-gray-600 mb-1">{v.circumferences}</p>}{v.notes && <p className="text-sm text-gray-700 italic">{v.notes}</p>}</div>)}</div>}</div>
                             <button onClick={() => { setFormData({ date: new Date().toISOString().split('T')[0], weight: '', bmi: '', circumferences: '', notes: '' }); setShowForm('addVisit'); }} className="w-full bg-[#E8B49A] text-[#0F1A33] rounded-xl py-4 font-semibold hover:bg-orange-500 flex items-center justify-center gap-2"><IconPlus size={20} />Nuova visita</button>
                         </div>
                     </div>
@@ -567,7 +576,3 @@ if (showForm) {
 </body>
 
 </html>
-
-
-
-
