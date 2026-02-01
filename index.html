@@ -159,7 +159,7 @@ const loadFromAirtable = async () => {
                 name: fields['Nome e Cognome'] || '',
                 birthDate: fields['Data di nascita'] || '',
                 height: patientVisits[0]?.height || '',
-                status: fields.Stato === 'Concluso' ? 'completed' : 'active',
+                status: fields['Stato (Attivo / Concluso)'] === 'Concluso' ? 'completed' : 'active',
                 allergies: fields['Allergie/Intolleranze/Patologie/Farmaci'] || '',
                 notes: fields['Note principali'] || '',
                 totalVisitsPurchased: fields['Numero visite totali'] || 0,
@@ -218,7 +218,7 @@ const loadFromAirtable = async () => {
             'Nome e Cognome': formData.name,
             'Data di nascita': formData.birthDate,
             'Altezza': formData.height ? parseInt(formData.height) : null,
-            'Stato': formData.status === 'completed' ? 'Concluso' : 'Attivo',
+            'Stato (Attivo / Concluso)': formData.status === 'completed' ? 'Concluso' : 'Attivo',
             'Allergie/Intolleranze/Patologie/Farmaci': formData.allergies || '',
             'Note principali': formData.notes || '',
             'Numero visite totali': formData.totalVisitsPurchased ? parseInt(formData.totalVisitsPurchased) : 0
@@ -487,7 +487,7 @@ if (showForm) {
         </span>
         {p.daysSinceLastVisit > 60 && <div className="text-2xl">🔴</div>}
     </div>
-    <div className="grid grid-cols-4 gap-2 text-sm">
+    <div className="grid grid-cols-4 text-sm" style={{gap: '0.5rem 1.5rem'}}>
     <div>
         <p className="text-gray-500 text-xs">Ultima visita</p>
         <p className="font-semibold text-sm">{p.lastVisit ? new Date(p.lastVisit).toLocaleDateString('it-IT') : '-'}</p>
@@ -580,6 +580,7 @@ if (showForm) {
 </body>
 
 </html>
+
 
 
 
